@@ -35,7 +35,7 @@ meter2inch = 39.3701
 
 # Page Title
 # st.title('Prediction of Saturation Changes during Inundation')
-st.set_option('deprecation.showPyplotGlobalUse', False)
+# st.set_option('deprecation.showPyplotGlobalUse', False)
 
 ## Loading ML Models
 def load_models():
@@ -293,7 +293,7 @@ elif sg_type in ['A-7-5', 'A-7-6']:
     Mrs = generate_Mr(gwt_vals, Mr_initial_A7, soil_type=sg_type)
     Flooded_Mr = Flooded_Mr_A7
 
-print(Mrs)
+# print(Mrs)
 
 flooded_vals = get_flooded_days(flooded_days, 0.2)
 # print(flooded_vals)
