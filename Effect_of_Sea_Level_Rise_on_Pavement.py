@@ -26,6 +26,18 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+st.markdown("""
+    <style>
+    @media (prefers-color-scheme: dark) {
+        img {
+            background-color: #ffffff;  /* White background for images in dark mode */
+            border: 1px solid #ffffff;  /* Optional: adds a border around the image */
+            padding: 10px;  /* Optional: adds space between the border and the image */
+        }
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
 # image = Image.open('Figure 3.jpg')
 # st.image(image, caption = 'Schematics for the pavement modelling')
 
