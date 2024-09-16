@@ -427,11 +427,14 @@ fig.add_shape(
 )
 
 fig.update_layout(
+    plot_bgcolor='rgba(0,0,0,0)',  # Transparent background
+    paper_bgcolor='rgba(0,0,0,0)',  # Transparent paper background
+    font=dict(color="black"),
     xaxis_visible=False, yaxis_visible=False, # Hide the axes
     # title_text="pavement layer structure", plot_bgcolor='white',
     showlegend=True, # Optionally hide the legend if not required
     legend=dict(font=dict(size=24)),
-    paper_bgcolor="white",
+    # paper_bgcolor="white",
     margin=dict(l=0, r=0, t=40, b=0),
     height=300,
     width=800
@@ -451,7 +454,9 @@ if not uncertainty:
     fig.update_layout(title='Yearly growth of groundwater and flooded days under the pavement',
                     xaxis_title='Year', 
                     yaxis_title = 'Groundwater level (0: surface layer)',
-                    plot_bgcolor='white',
+                    plot_bgcolor='rgba(0,0,0,0)',  # Transparent background
+                    paper_bgcolor='rgba(0,0,0,0)',  # Transparent paper background
+                    font=dict(color="black"),
                     yaxis=dict(tickfont=dict(color='rgba(0,120,100,1)'),
                             titlefont=dict(color='rgba(0,120,100,1)')),
                     yaxis2=dict(
@@ -504,7 +509,9 @@ else:
     fig.update_layout(title='Yearly rise of groundwater table and flooded days',
                     xaxis_title='Year', 
                     yaxis_title = 'Groundwater level (0: surface layer)',
-                    plot_bgcolor='white',
+                    plot_bgcolor='rgba(0,0,0,0)',  # Transparent background
+                    paper_bgcolor='rgba(0,0,0,0)',  # Transparent paper background
+                    font=dict(color="black"),
                     yaxis=dict(tickfont=dict(color='rgba(0,120,100,1)'),
                             titlefont=dict(color='rgba(0,120,100,1)')),
                     yaxis2=dict(
@@ -588,7 +595,9 @@ if prediction_state:
                         orientation='h'  # Optional: makes the legend horizontal)
                     ),
             # legend_title_text='Legend',
-            plot_bgcolor='white',
+            plot_bgcolor='rgba(0,0,0,0)',  # Transparent background
+            paper_bgcolor='rgba(0,0,0,0)',  # Transparent paper background
+            font=dict(color="black"),
             height=600,
             width=800
         )
@@ -687,7 +696,9 @@ if prediction_state:
                 yanchor='top',  # Anchors the top of the legend at y
                 orientation='h'  # Optional: makes the legend horizontal)
             ),
-            plot_bgcolor='white'
+            plot_bgcolor='rgba(0,0,0,0)',  # Transparent background
+            paper_bgcolor='rgba(0,0,0,0)',  # Transparent paper background
+            font=dict(color="black"),
         )
         fig.update_traces(hoverlabel=dict(font_size=16,  # Set the font size
                                   font_family='Arial',  # Set the font family (optional)
