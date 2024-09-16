@@ -39,18 +39,18 @@ meter2inch = 39.3701
 
 ## Loading ML Models
 def load_models():
-    edge_sat_sur_model = pickle.load(open(f'models/edge_sat_sur_model.obj', 'rb'))
-    edge_sat_base_model = pickle.load(open(f'models/edge_sat_base_model.obj', 'rb'))
-    edge_sat_sga_model = pickle.load(open(f'models/edge_sat_sga_model.obj', 'rb'))
-    edge_pt_model = pickle.load(open(f'models/edge_peak_time_model.obj', 'rb'))
-    edge_rt_model = pickle.load(open(f'models/edge_rest_time_model.obj', 'rb'))
-    edge_vadose_model = pickle.load(open(f'models/edge_sat_vadose_model.obj', 'rb'))
-    wp_sat_sur_model = pickle.load(open(f'models/wp_sat_sur_model.obj', 'rb'))
-    wp_sat_base_model = pickle.load(open(f'models/wp_sat_base_model.obj', 'rb'))
-    wp_sat_sga_model = pickle.load(open(f'models/wp_sat_sga_model.obj', 'rb'))
-    wp_pt_model = pickle.load(open(f'models/wp_peak_time_model.obj', 'rb'))
-    wp_rt_model = pickle.load(open(f'models/wp_rest_time_model.obj', 'rb'))
-    wp_vadose_model = pickle.load(open(f'models/wp_sat_vadose_model.obj', 'rb'))
+    edge_sat_sur_model = pickle.load(open(f'./Models/edge_sat_sur_model.obj', 'rb'))
+    edge_sat_base_model = pickle.load(open(f'./Models/edge_sat_base_model.obj', 'rb'))
+    edge_sat_sga_model = pickle.load(open(f'./Models/edge_sat_sga_model.obj', 'rb'))
+    edge_pt_model = pickle.load(open(f'./Models/edge_peak_time_model.obj', 'rb'))
+    edge_rt_model = pickle.load(open(f'./Models/edge_rest_time_model.obj', 'rb'))
+    edge_vadose_model = pickle.load(open(f'./Models/edge_sat_vadose_model.obj', 'rb'))
+    wp_sat_sur_model = pickle.load(open(f'./Models/wp_sat_sur_model.obj', 'rb'))
+    wp_sat_base_model = pickle.load(open(f'./Models/wp_sat_base_model.obj', 'rb'))
+    wp_sat_sga_model = pickle.load(open(f'./Models/wp_sat_sga_model.obj', 'rb'))
+    wp_pt_model = pickle.load(open(f'./Models/wp_peak_time_model.obj', 'rb'))
+    wp_rt_model = pickle.load(open(f'./Models/wp_rest_time_model.obj', 'rb'))
+    wp_vadose_model = pickle.load(open(f'./Models/wp_sat_vadose_model.obj', 'rb'))
     return edge_sat_sur_model, edge_sat_base_model, edge_sat_sga_model, edge_pt_model, edge_rt_model,edge_vadose_model,\
            wp_sat_sur_model, wp_sat_base_model, wp_sat_sga_model, wp_pt_model, wp_rt_model, wp_vadose_model
 
