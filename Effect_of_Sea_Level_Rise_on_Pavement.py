@@ -541,7 +541,8 @@ if prediction_state:
     st.markdown('## Pavement Performance Life Curve')
     st.markdown('### PSI curve with impact of rising groundwater and flood')
     if not uncertainty:
-        GWT_and_Flood_psi_data_A24 = get_psi_gwt_flood(Mrs=Mrs, Flooded_Mr=Flooded_Mr_A24, design_years=design_years)
+        # print(Mrs)
+        GWT_and_Flood_psi_data_A24 = get_psi_gwt_flood(Mrs=Mrs, Flooded_Mr=Flooded_Mr, design_years=design_years)
         psi_data = pd.DataFrame({'Year': np.arange(365*design_years+1)/365,'PSI': GWT_and_Flood_psi_data_A24})
         psi_data['PSI'] = psi_data['PSI'].where(psi_data['PSI'] >= 1.0)
 
@@ -630,7 +631,7 @@ if prediction_state:
             # print(gwt_rise_std)
             gwts = get_gwts(GWT_initial, gwt_rise, gwt_rise_std)
             # print(gwts)
-            Mrs = generate_Mr(gwts, Mr_initial, soil_type=sg_type)
+            # Mrs = generate_Mr(gwts, Mr_initial, soil_type=sg_type)
             # print(Mrs)
             psi_results = get_psi_gwt_flood(flooded_vals=sim_flooded_days, Mrs=Mrs, Flooded_Mr=Flooded_Mr)
             all_psi_results.append(psi_results)
