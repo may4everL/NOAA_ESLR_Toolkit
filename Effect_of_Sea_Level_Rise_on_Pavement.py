@@ -309,6 +309,9 @@ elif sg_type in ['A-7-5', 'A-7-6']:
 
 flooded_vals = get_flooded_days(flooded_days, 0.2)
 # print(flooded_vals)
+def calc_SN(surT=surT, baseT=baseT, a1=a1, a2=a2, m2=m2):
+    return a1 * surT + a2 * baseT * m2
+SN = calc_SN()
 def calculate_delta_psi(esal=5000, SN=5.0):
     return (10**((np.log10(esal))-(0.45*(-1.645))-(9.36*np.log10(SN+1))\
                 +0.2+8.07-(2.32*np.log10(15000)))*(0.4+(1094/((SN+1)**5.19))))*(4.2-1.5)
@@ -369,7 +372,7 @@ def get_psi_gwt_flood(psi_i=4.2, psi_t=1.0, design_years=20, Mrs=Mrs, Flooded_Mr
 st.markdown('## Input Information')
 st.markdown('### Pavement Configuration')
 fig = go.Figure()
-y0_bot = 0.0
+y0_bot = -50.0
 y1_bot = y0_bot + 2.0
 y0_mid = y1_bot
 y1_mid = y1_bot + baseT/50.0
