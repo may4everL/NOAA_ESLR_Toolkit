@@ -1,0 +1,11 @@
+[browser]
+gatherUsageStats = true  # Optional: disable usage stats
+
+[theme]
+base="light"  # or "dark", depending on your preference
+
+[deprecation]
+showfileUploaderEncoding = false
+
+[menu]
+items=['reportBug', 'getHelp', 'about']  # Exclude 'menuItem' to hide GitHub repo link

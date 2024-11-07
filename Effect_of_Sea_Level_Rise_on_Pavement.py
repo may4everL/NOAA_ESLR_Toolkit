@@ -9,7 +9,12 @@ from PIL import Image
 
 st.set_page_config(
     page_title='Effect of Sea Level Rise on Pavement Performance',
-    page_icon=":arrow_right:"
+    page_icon=":arrow_right:",
+    menu_items={
+        'Get Help': 'mailto:wei.sun@unh.edu',
+        'Report a bug': 'mailto:wei.sun@unh.edu',
+        'About': "This is a Streamlit app developed by Wei Sun, focusing on the impact of sea level rise on pavement performance"
+    }
 )
 
 # Font
