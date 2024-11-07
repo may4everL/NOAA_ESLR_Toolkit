@@ -636,7 +636,7 @@ if prediction_state:
             # print(gwts)
             # Mrs = generate_Mr(gwts, Mr_initial, soil_type=sg_type)
             # print(Mrs)
-            psi_results = get_psi_gwt_flood(flooded_vals=sim_flooded_days, Mrs=Mrs, Flooded_Mr=Flooded_Mr)
+            psi_results = get_psi_gwt_flood(flooded_vals=sim_flooded_days, Mrs=Mrs, Flooded_Mr=Flooded_Mr, design_years=design_years)
             all_psi_results.append(psi_results)
 
         all_psi_results = np.array(all_psi_results)
@@ -646,7 +646,8 @@ if prediction_state:
 
         years = np.arange(365 * design_years + 1) / 365
         valid_psi = mean_psi >= 1.0
-
+        # valid_psi_tmp = np.full_like(years, fill_value=False, dtype=bool)
+        # valid_psi_tmp[:len(valid_psi)] = valid_psi
         fig = go.Figure()
         # Confidence interval area
         fig.add_trace(go.Scatter(
