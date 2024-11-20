@@ -65,7 +65,7 @@ def generate_Mr(gwt_vals, soil_type='A-2-4'):
     return Mrs
 
 
-with open('./models/modulus_table.pkl', 'rb') as file:
+with open('models/modulus_table.pkl', 'rb') as file:
     # Load the data from the file
     df = pickle.load(file)
 
