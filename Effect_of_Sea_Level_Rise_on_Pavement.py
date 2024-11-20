@@ -100,14 +100,14 @@ with st.sidebar.expander("Traffic"):
     growth_rate = st.number_input("Growth Rate", min_value=0.0, max_value=0.5, value=0.04, step=0.01)
     advanced_settings = st.checkbox("Advanced Settings")
     if advanced_settings:
+        traffic_classes = {5:0.4,6:0.3,7:0.2}
         traffic_class_options = [str(i) for i in range(1, 14)]  # Traffic classes from 1 to 13
-        traffic_classes = {}
         for class_label in range(4, 14):  # Traffic classes from 1 to 13
             percentage = st.number_input(
                 f"Percentage for Class {class_label}",
                 min_value=0,
                 max_value=100,
-                value=0 if class_label != 5 else 100,
+                value=int(traffic_classes[class_label]*100) if class_label in traffic_classes else 0,
                 key=f"percentage_class_{class_label}"
             )
             traffic_classes[class_label] = percentage/100
@@ -119,7 +119,7 @@ with st.sidebar.expander("Traffic"):
         traffic_classes[2] = remaining / 3.0
         traffic_classes[3] = remaining / 3.0
     else:
-        traffic_classes = {3:0.1,5:0.4,6:0.3,7:0.2}  # Or set a default dictionary if needed
+        traffic_classes = {1:0.033,2:0.033,3:0.033,5:0.4,6:0.3,7:0.2}  # Or set a default dictionary if needed
 
 st.sidebar.markdown("### Advanced Settings")  # Subheader for additional settings
 with st.sidebar.expander("Layer Coefficients"):
@@ -228,13 +228,6 @@ def get_gwts(g_initial = GWT_initial,g_rise=gwt_rise,gwt_std=0.0, years=design_y
     if gwt_std > 0.0:
         gwts = [np.random.normal(mean, gwt_std + 0.1*year*gwt_std) for year, mean in enumerate(gwts)]
     return gwts
-
-
-# Mrs_A1b = [Mr_initial_A1b * (0.000133*(GWT_initial+i)**2 - 0.0123*(GWT_initial+i) + 0.928) for i in np.arange(20)]
-# Mrs_A24 = [Mr_initial_A24 * (0.000133*(GWT_initial+i)**2 - 0.0123*(GWT_initial+i) + 0.928) for i in np.arange(20)]
-# Mrs_A4 = [Mr_initial_A4 * (0.000133*(GWT_initial+i)**2 - 0.0123*(GWT_initial+i) + 0.928) for i in np.arange(20)]
-# Mrs_A6 = [Mr_initial_A6 * (0.000133*(GWT_initial+i)**2 - 0.0123*(GWT_initial+i) + 0.928) for i in np.arange(20)]
-# Mrs_A7 = [Mr_initial_A7 * (0.000133*(GWT_initial+i)**2 - 0.0123*(GWT_initial+i) + 0.928) for i in np.arange(20)]
 
 # flood information
 if not uncertainty:
@@ -560,7 +553,7 @@ for day in range(design_years * 365):
     # Compute the AADT for that year
     current_aadt = aadt * ((1 + growth_rate) ** year)
     # Assuming ESAL per day is proportional to AADT / 365
-    daily_esal = current_aadt
+    daily_esal = round(current_aadt)
     esals.append(daily_esal)
     x_values.append(day)
     year_display = year + 1  # Year numbering starts from 1
