@@ -414,7 +414,7 @@ fig.add_shape(
     type='line',
     x0=-0.1, x1=2.3,
     y0=y_gwt_current, y1=y_gwt_current,
-    line=dict(color='black', width=3, dash='dash'),
+    line=dict(color='black', width=3, dash='dot'),
     layer='above',  # Drawn above other shapes
     name='Current GWT'
 )
@@ -452,7 +452,7 @@ fig.add_shape(
     type='line',
     x0=-0.1, x1=2.3,
     y0=y_gwt_future, y1=y_gwt_future,
-    line=dict(color='purple', width=3, dash='dash'),
+    line=dict(color='purple', width=3, dash='dot'),
     layer='above',
     name=f'Future GWT at Year {design_years}'
 )

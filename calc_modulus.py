@@ -60,7 +60,7 @@ def generate_Mr(gwt_vals, soil_type='A-2-4'):
     if soil_type == 'A-7-6':
         a, b, c = -2.88e-6, 5.95e-3, 2.110e-1
     Mrs = [Mr_initial * (a*(gwt)**2 + b*(gwt) + c) for gwt in gwt_vals]
-    print(f'before cutoff: {Mrs}')
+    # print(f'before cutoff: {Mrs}')
     Mrs = [min(max(x, Mr_sats[soil_type]), Mr_opts[soil_type]) for x in Mrs] # apply cutoff from Mr_sat to Mr_opt
     return Mrs
 
