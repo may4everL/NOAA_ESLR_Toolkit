@@ -85,9 +85,9 @@ with st.sidebar.expander("Material Properties"):
 
 st.sidebar.markdown("### Groundwater Info")  # Subheader for groundwater information
 with st.sidebar.expander("Groundwater Level"):
-    gwt = st.slider("Groundwater table: depth from the surface (inch)", min_value=surT+baseT, max_value=160, value=surT+baseT+40)
+    gwt = st.slider("Groundwater table: depth below the surface (inch)", min_value=surT+baseT, max_value=160, value=surT+baseT+40)
     gwt = gwt - surT - baseT  # Adjusting groundwater table depth
-    st.text(f'{gwt}in from top of subgrade')
+    st.text(f'{gwt}in below top of subgrade')
 
 st.sidebar.markdown("### Sea Level Rise Impact")  # Subheader for sea level rise
 with st.sidebar.expander("Impact Details"):
@@ -651,21 +651,22 @@ st.markdown("""---""")
 st.markdown('### Groundwater Rise and Flooded days')
 years = np.arange(0, design_years)
 if not uncertainty:
-    gwt_values = -gwt + gwt_rise * (years)
+    gwt_values = gwt - gwt_rise * (years)
     flood_values = flooded_vals
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=years, y=gwt_values, mode='lines+markers', name='Groundwater level', line=dict(color='rgba(0,120,100,1)'),))
-    fig.add_trace(go.Scatter(x=years, y=flood_values, mode='lines+markers', name='Flood days', line=dict(color='rgba(120,0,100,1)'), yaxis='y2'))
+    fig.add_trace(go.Scatter(x=years, y=flood_values, mode='lines+markers', name='Flooded days', line=dict(color='rgba(120,0,100,1)'), yaxis='y2'))
     fig.update_layout(title='Yearly growth of groundwater and flooded days under the pavement',
                     xaxis_title='Year', 
-                    yaxis_title = 'GWT from top of subgrade (inch)',
+                    yaxis_title = 'GWT below pavement surface (inch)',
                     plot_bgcolor='rgba(0,0,0,0)',  # Transparent background
                     paper_bgcolor='rgba(0,0,0,0)',  # Transparent paper background
                     font=dict(color="black"),
                     yaxis=dict(tickfont=dict(color='rgba(0,120,100,1)'),
-                            titlefont=dict(color='rgba(0,120,100,1)')),
+                            titlefont=dict(color='rgba(0,120,100,1)'),
+                            range = [gwt_values[0]+2, max(gwt_values[-1], 0)-2]),
                     yaxis2=dict(
-                        range=(min(flood_values), max(flood_values) + 1),
+                        range=(min(flood_values)-2, max(flood_values)+2),
                         title="Flooded Days",
                         anchor="x",
                         overlaying="y",
