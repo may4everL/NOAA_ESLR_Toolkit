@@ -663,7 +663,12 @@ if not uncertainty:
                     paper_bgcolor='rgba(0,0,0,0)',  # Transparent paper background
                     font=dict(color="black"),
                     yaxis=dict(tickfont=dict(color='rgba(0,120,100,1)'),
-                            titlefont=dict(color='rgba(0,120,100,1)'),
+                            title={
+                                "text": "Flooded Days",
+                                "font": {
+                                "color": 'rgba(120,0,100,1)'
+                                }
+                            },
                             range = [gwt_values[0]+2, max(gwt_values[-1], 0)-2]),
                     yaxis2=dict(
                         range=(min(flood_values)-2, max(flood_values)+2),
@@ -673,7 +678,12 @@ if not uncertainty:
                         side="right",
                         dtick=1.0,
                         tickfont=dict(color='rgba(120,0,100,1)'),
-                        titlefont=dict(color='rgba(120,0,100,1)'),
+                        title={
+                            "text": "Flooded Days",
+                            "font": {
+                            "color": 'rgba(120,0,100,1)'
+                            }
+                        },
                     ),
                     legend=dict(
                         font=dict(size=15),
@@ -719,11 +729,21 @@ else:
                     paper_bgcolor='rgba(0,0,0,0)',  # Transparent paper background
                     font=dict(color="black"),
                     yaxis=dict(tickfont=dict(color='rgba(0,120,100,1)'),
-                            titlefont=dict(color='rgba(0,120,100,1)')),
+                            title={
+                                "text": "Flooded Days",
+                                "font": {
+                                "color": 'rgba(120,0,100,1)'
+                                }
+                            },
                     yaxis2=dict(
                         range=(min(flood_lower_bound), max(flood_upper_bound) + 1),
-                        title="Flooded Days",
-                        titlefont=dict(color='rgba(120,0,100,1)'),
+                        title={
+                            "text": "Flooded Days",
+                            "font": {
+                            "color": 'rgba(120,0,100,1)'
+                            }
+                        },
+                        # titlefont=dict(color='rgba(120,0,100,1)'), 
                         tickfont=dict(color='rgba(120,0,100,1)'),
                         anchor="x",
                         overlaying="y",
