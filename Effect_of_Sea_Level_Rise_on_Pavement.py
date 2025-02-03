@@ -672,7 +672,6 @@ if not uncertainty:
                             range = [gwt_values[0]+2, max(gwt_values[-1], 0)-2]),
                     yaxis2=dict(
                         range=(min(flood_values)-2, max(flood_values)+2),
-                        title="Flooded Days",
                         anchor="x",
                         overlaying="y",
                         side="right",
