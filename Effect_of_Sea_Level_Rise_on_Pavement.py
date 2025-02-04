@@ -734,6 +734,7 @@ else:
                                 "color": 'rgba(120,0,100,1)'
                                 }
                             },
+                    ),
                     yaxis2=dict(
                         range=(min(flood_lower_bound), max(flood_upper_bound) + 1),
                         title={
@@ -756,7 +757,7 @@ else:
                         xanchor='center',  # Anchors the center of the legend at x
                         yanchor='top',  # Anchors the top of the legend at y
                         orientation='h'  # Optional: makes the legend horizontal)
-                    )))
+                    ))
     fig.update_xaxes(tickfont=dict(size=20),title_font=dict(size=20), range=[-1, design_years+1])
     fig.update_yaxes(tickfont=dict(size=20),title_font=dict(size=20))
     st.plotly_chart(fig, use_container_width=True)
