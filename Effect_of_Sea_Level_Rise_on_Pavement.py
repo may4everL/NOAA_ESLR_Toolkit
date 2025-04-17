@@ -664,9 +664,9 @@ if not uncertainty:
                     font=dict(color="black"),
                     yaxis=dict(tickfont=dict(color='rgba(0,120,100,1)'),
                             title={
-                                "text": "Flooded Days",
+                                "text": "Groundwater level",
                                 "font": {
-                                "color": 'rgba(120,0,100,1)'
+                                "color": 'rgba(0,120,100,1)'
                                 }
                             },
                             range = [gwt_values[0]+2, max(gwt_values[-1], 0)-2]),
@@ -696,24 +696,24 @@ if not uncertainty:
     fig.update_yaxes(tickfont=dict(size=20),title_font=dict(size=20))
     st.plotly_chart(fig, use_container_width=True)
 else:
-    gwt_values = -gwt + gwt_rise * (years)
-    gwt_lower_bound = gwt_values - 1.96 * (gwt_rise_std * 0.2 * years)
-    gwt_upper_bound = gwt_values + 1.96 * (gwt_rise_std * 0.2 * years)
+    gwt_values = gwt - gwt_rise * (years)
+    gwt_lower_bound = gwt_values + 1.96 * (gwt_rise_std * 0.2 * years)
+    gwt_upper_bound = gwt_values - 1.96 * (gwt_rise_std * 0.2 * years)
     flood_values = np.int32(flooded_days + 0.2 * (years))
     flood_lower_bound = flood_values - 1.96 * (flooded_days_std * 0.01 * years)
     flood_upper_bound = flood_values + 1.96 * (flooded_days_std * 0.01 * years)
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=np.concatenate([years, years[::-1]]),  # years forward and then backward
-                        y=np.concatenate([gwt_upper_bound, gwt_lower_bound[::-1]]),
-                        fill='toself', fillcolor='rgba(0,100,80,0.15)',
-                        line=dict(color='rgba(255,255,255,100)'),
-                        showlegend=False, name='95% Confidence Interval'))
+    # fig.add_trace(go.Scatter(x=np.concatenate([years, years[::-1]]),  # years forward and then backward
+    #                     y=np.concatenate([gwt_upper_bound, gwt_lower_bound[::-1]]),
+    #                     fill='toself', fillcolor='rgba(0,100,80,0.15)',
+    #                     line=dict(color='rgba(255,255,255,100)'),
+    #                     showlegend=False, name='95% Confidence Interval'))
     fig.add_trace(go.Scatter(x=np.concatenate([years, years[::-1]]),  # years forward and then backward
                         y=np.concatenate([flood_upper_bound, flood_lower_bound[::-1]]),
                         fill='toself', fillcolor='rgba(100,0,80,0.15)',
                         line=dict(color='rgba(255,255,255,100)'),
                         showlegend=False, name='95% Confidence Interval', yaxis='y2'))
-    fig.add_trace(go.Scatter(x=years, y=gwt_values, mode='lines+markers', name='Groundwater rise', line=dict(color='rgba(0,120,100,1)'),
+    fig.add_trace(go.Scatter(x=years, y=gwt_values, mode='lines+markers', name='Groundwater level', line=dict(color='rgba(0,120,100,1)'),
                                 ))
     fig.add_trace(go.Scatter(x=years, y=flood_values, mode='lines+markers', name='Flooded days', line=dict(color='rgba(120,0,100,1)'), yaxis='y2' 
                                 ))
@@ -729,11 +729,12 @@ else:
                     font=dict(color="black"),
                     yaxis=dict(tickfont=dict(color='rgba(0,120,100,1)'),
                             title={
-                                "text": "Flooded Days",
+                                "text": "Groundwater level",
                                 "font": {
-                                "color": 'rgba(120,0,100,1)'
+                                "color": 'rgba(0,120,100,1)'
                                 }
                             },
+                            range = [gwt_values[0]+2, max(gwt_values[-1], 0)-2],
                     ),
                     yaxis2=dict(
                         range=(min(flood_lower_bound), max(flood_upper_bound) + 1),
@@ -832,7 +833,7 @@ if prediction_state:
         ending_year = np.ceil(np.max(psi_data['Year'].where(psi_data['PSI'] >= 1.0)))
         # print(ending_year)
         fig.update_xaxes(tickfont=dict(size=25),title_font=dict(size=25), range=[-1, ending_year+1])
-        fig.update_yaxes(tickfont=dict(size=25),title_font=dict(size=25))
+        fig.update_yaxes(tickfont=dict(size=25),title_font=dict(size=25), range=[0, 4.5])
 
         st.plotly_chart(fig, use_container_width=True)
 
@@ -929,7 +930,7 @@ if prediction_state:
         
         # print(ending_year)
         fig.update_xaxes(range=[-1, ending_year+1],tickfont=dict(size=20),title_font=dict(size=20),showgrid=True, gridwidth=1, gridcolor='lightgrey')
-        fig.update_yaxes(tickfont=dict(size=20),title_font=dict(size=20),showgrid=True, gridwidth=1, gridcolor='lightgrey')
+        fig.update_yaxes(tickfont=dict(size=20),title_font=dict(size=20),showgrid=True, gridwidth=1, gridcolor='lightgrey', range=[0, 4.5])
 
         # Show plot in Streamlit
         st.plotly_chart(fig, use_container_width=True)
