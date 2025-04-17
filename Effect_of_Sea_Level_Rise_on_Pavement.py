@@ -299,9 +299,9 @@ def get_psi_gwt_flood(psi_i=4.2, psi_t=1.0, esals=esals, design_years=20, Mrs=Mr
             # Calculate delta_psi assuming some MR calculation here
             Mr_cur = Mrs[(start_day + day)//365]
             SN = T1*a1+T2*a2*m2
-            # delta_psi = (4.2-1.5) * (10**((math.log10(esals[start_day + day])-(0.45*(-1.645))-(9.36*math.log10(SN+1))\
-            #     +0.2+8.07-(2.32*math.log10(Mr_cur)))*(0.4+(1094/((SN+1)**5.19)))))
-            delta_psi = calculate_delta_psi(esals[start_day+day], SN)
+            delta_psi = (4.2-1.5) * (10**((math.log10(esals[start_day + day])-(0.45*(-1.645))-(9.36*math.log10(SN+1))\
+                +0.2+8.07-(2.32*math.log10(Mr_cur)))*(0.4+(1094/((SN+1)**5.19)))))
+            # delta_psi = calculate_delta_psi(esals[start_day+day], SN)
             daily_psi_drop[day] = last_psi - delta_psi
             last_psi = daily_psi_drop[day]
             if last_psi < psi_t:
