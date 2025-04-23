@@ -27,10 +27,12 @@ def get_daily_ESAL(AADT, traffic_perc, G=0.04, design_years=21, D=0.5, L=0.79):
     for traffic_class in traffic_perc.keys():
         total_truck_traffic += traffic_ealf[traffic_class] * traffic_perc[traffic_class]
     # print(total_truck_traffic)
+    # print(AADT * total_truck_traffic * D * L * 365)
     if G == 0.0:
         yearly_values = [AADT * total_truck_traffic * D * L * 365 for _ in range(design_years)]
     else:
-        yearly_values = [AADT * total_truck_traffic * D * L * 365 * (((1 + G)**max(0.01, year)) - 1) / G for year in range(design_years)]
+        yearly_values = [AADT * total_truck_traffic * D * L * 365 * ((1 + G)**year) for year in range(design_years)]
+    # print(yearly_values)
     daily_values = np.zeros(design_years * 365)  # Array to hold daily ESAL values
     # Fill daily values by interpolating yearly increases
     start_index = 0

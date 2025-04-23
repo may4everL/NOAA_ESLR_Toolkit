@@ -96,11 +96,11 @@ with st.sidebar.expander("Impact Details"):
 
 st.sidebar.markdown("### Traffic Information")  # Subheader for traffic information
 with st.sidebar.expander("Traffic"):
-    aadt = st.number_input("AADT (Annual Average Daily Traffic)", min_value=2000, max_value=100000, value=5000)
-    growth_rate = st.number_input("Growth Rate", min_value=0.0, max_value=0.5, value=0.04, step=0.01)
+    aadt = st.number_input("AADTT (Annual Average Daily Truck Traffic)", min_value=100, max_value=100000, value=5000)
+    growth_rate = st.number_input("Growth Rate", min_value=0.0, max_value=0.5, value=0.10, step=0.01)
     advanced_settings = st.checkbox("Advanced Settings")
     if advanced_settings:
-        traffic_classes = {5:0.4,6:0.3,7:0.2}
+        traffic_classes = {9:0.4,10:0.3,11:0.2,12:0.1}
         traffic_class_options = [str(i) for i in range(1, 14)]  # Traffic classes from 1 to 13
         for class_label in range(4, 14):  # Traffic classes from 1 to 13
             percentage = st.number_input(
@@ -114,12 +114,16 @@ with st.sidebar.expander("Traffic"):
         cum = 0
         for traffic_class in traffic_classes.keys():
             cum += traffic_classes[traffic_class]
-        remaining = 1.0 - cum
-        traffic_classes[1] = remaining / 3.0
-        traffic_classes[2] = remaining / 3.0
-        traffic_classes[3] = remaining / 3.0
+        remaining = round(1.0 - cum, 3)
+        # traffic_classes[1] = remaining / 3.0
+        # traffic_classes[2] = remaining / 3.0
+        # traffic_classes[3] = remaining / 3.0
+        if remaining != 0.000:
+            st.write(f"**Note: The traffic percentage should sum up to 100%, now it is {(1 - remaining)*100}%**")
     else:
-        traffic_classes = {1:0.033,2:0.033,3:0.033,5:0.4,6:0.3,7:0.2}  # Or set a default dictionary if needed
+        traffic_classes = {9:0.4,10:0.3,11:0.2,12:0.1}  # Or set a default dictionary if needed
+    esals = get_daily_ESAL(aadt, traffic_perc=traffic_classes, G=growth_rate, design_years=design_years)
+    # print(f"total ESALs {np.sum(esals)}")
 
 st.sidebar.markdown("### Advanced Settings")  # Subheader for additional settings
 with st.sidebar.expander("Layer Coefficients"):
@@ -232,7 +236,7 @@ def get_gwts(g_initial = GWT_initial,g_rise=gwt_rise,gwt_std=0.0, years=design_y
 # flood information
 if not uncertainty:
     flooded_days_std = 0.0      
-def get_flooded_days(flood_initial=flooded_days, flood_rise_rate=0.1, flooded_days_std=flooded_days_std):
+def get_flooded_days(flood_initial=flooded_days, flood_rise_rate=0.0, flooded_days_std=flooded_days_std):
     floods = [int(flood_initial + flood_rise_rate * i) for i in range(design_years+1)]
     if flooded_days_std > 0.0:
         floods = [int(np.random.normal(mean, flooded_days_std + 0.1*year*flooded_days_std)) for year, mean in enumerate(floods)]
@@ -241,7 +245,7 @@ def get_flooded_days(flood_initial=flooded_days, flood_rise_rate=0.1, flooded_da
 
 # print(Mrs)
 gwt_vals = get_gwts(GWT_initial, gwt_rise, gwt_rise_std, design_years)
-flooded_vals = get_flooded_days(flooded_days, 0.2)
+flooded_vals = get_flooded_days(flooded_days, 0.0)
 soil_map = {
     'A-1-a':1,
     'A-1-b':2,
@@ -274,9 +278,10 @@ Flooded_Mr = generate_flooded_Mr(input_params_list)
 def calc_SN(surT=surT, baseT=baseT, a1=a1, a2=a2, m2=m2):
     return a1 * surT + a2 * baseT * m2
 SN = calc_SN()
-def calculate_delta_psi(esal=5000, SN=5.0):
+# print(SN)
+def calculate_delta_psi(esal=5000, Mr=15000, SN=5.0):
     return (10**((np.log10(esal))-(0.45*(-1.645))-(9.36*np.log10(SN+1))\
-                +0.2+8.07-(2.32*np.log10(15000)))*(0.4+(1094/((SN+1)**5.19))))*(4.2-1.5)
+                +0.2+8.07-(2.32*np.log10(Mr)))*(0.4+(1094/((SN+1)**5.19))))*(4.2-1.5)
 # print(Mrs)
 # print(Flooded_Mr)
 def get_psi_gwt_flood(psi_i=4.2, psi_t=1.0, esals=esals, design_years=20, Mrs=Mrs, Flooded_Mr=Flooded_Mr, flooded_vals=flooded_vals):
@@ -299,9 +304,9 @@ def get_psi_gwt_flood(psi_i=4.2, psi_t=1.0, esals=esals, design_years=20, Mrs=Mr
             # Calculate delta_psi assuming some MR calculation here
             Mr_cur = Mrs[(start_day + day)//365]
             SN = T1*a1+T2*a2*m2
-            delta_psi = (4.2-1.5) * (10**((math.log10(esals[start_day + day])-(0.45*(-1.645))-(9.36*math.log10(SN+1))\
-                +0.2+8.07-(2.32*math.log10(Mr_cur)))*(0.4+(1094/((SN+1)**5.19)))))
-            # delta_psi = calculate_delta_psi(esals[start_day+day], SN)
+            # delta_psi = (4.2-1.5) * (10**((math.log10(esals[start_day + day])-(0.45*(-1.645))-(9.36*math.log10(SN+1))\
+            #     +0.2+8.07-(2.32*math.log10(Mr_cur)))*(0.4+(1094/((SN+1)**5.19)))))
+            delta_psi = calculate_delta_psi(esals[start_day+day-1], Mr_cur, SN)
             daily_psi_drop[day] = last_psi - delta_psi
             last_psi = daily_psi_drop[day]
             if last_psi < psi_t:
@@ -318,8 +323,9 @@ def get_psi_gwt_flood(psi_i=4.2, psi_t=1.0, esals=esals, design_years=20, Mrs=Mr
         for day in range(flooded_days):
             # Assuming a different MR for flood affected days
             Mr_cur = Flooded_Mr[(start_day + day)//365]
-            delta_psi = (10**((math.log10(esals[end_flood_effect_days + day])-(0.45*(-1.645))-(9.36*np.log10((T1*a1)+(T2*a2*m2)+1))\
-                +0.2+8.07-(2.32*math.log10(Mr_cur)))*(0.4+(1094/(((T1*a1)+(T2*a2*m2)+1)**5.19)))))*(4.2-1.5)
+            # delta_psi = (10**((math.log10(esals[end_flood_effect_days + day-1])-(0.45*(-1.645))-(9.36*np.log10((T1*a1)+(T2*a2*m2)+1))\
+            #     +0.2+8.07-(2.32*math.log10(Mr_cur)))*(0.4+(1094/(((T1*a1)+(T2*a2*m2)+1)**5.19)))))*(4.2-1.5)
+            delta_psi = calculate_delta_psi(esals[start_day+day-1], Mr_cur, SN)
             psi[start_day+flood_effect_days+day] = last_psi - delta_psi
             last_psi = psi[start_day+flood_effect_days+day]
         # Ensure we do not calculate beyond the design_years
@@ -544,7 +550,7 @@ st.plotly_chart(fig, use_container_width=True)
 
 st.markdown("""---""")
 st.markdown('### Traffic Growth and Distribution')
-esals = []
+aadts = []
 x_values = []
 hover_texts = []
 for day in range(design_years * 365):
@@ -553,8 +559,8 @@ for day in range(design_years * 365):
     # Compute the AADT for that year
     current_aadt = aadt * ((1 + growth_rate) ** year)
     # Assuming ESAL per day is proportional to AADT / 365
-    daily_esal = round(current_aadt)
-    esals.append(daily_esal)
+    daily_aadt = round(current_aadt)
+    aadts.append(daily_aadt)
     x_values.append(day)
     year_display = year + 1  # Year numbering starts from 1
     day_of_year = (day % 365) + 1  # Day numbering starts from 1
@@ -567,7 +573,7 @@ if traffic_classes:
     fig_esals = go.Figure()
     fig_esals.add_trace(go.Scatter(
         x=x_values,
-        y=esals,
+        y=np.round(esals),
         mode='lines',
         name='Daily ESALS',
         hovertext=hover_texts,
@@ -699,7 +705,7 @@ else:
     gwt_values = gwt - gwt_rise * (years)
     gwt_lower_bound = gwt_values + 1.96 * (gwt_rise_std * 0.2 * years)
     gwt_upper_bound = gwt_values - 1.96 * (gwt_rise_std * 0.2 * years)
-    flood_values = np.int32(flooded_days + 0.2 * (years))
+    flood_values = np.int32(flooded_days + 0.0 * (years))
     flood_lower_bound = flood_values - 1.96 * (flooded_days_std * 0.01 * years)
     flood_upper_bound = flood_values + 1.96 * (flooded_days_std * 0.01 * years)
     fig = go.Figure()
