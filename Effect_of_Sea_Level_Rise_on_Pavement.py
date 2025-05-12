@@ -125,6 +125,21 @@ with st.sidebar.expander("Traffic"):
     esals = get_daily_ESAL(aadt, traffic_perc=traffic_classes, G=growth_rate, design_years=design_years)
     # print(f"total ESALs {np.sum(esals)}")
 
+st.sidebar.markdown("### Serviceability Information")
+with st.sidebar.expander("Serviceability thresholds"):
+    init_psi = st.number_input(
+        "Initial PSI",
+        min_value=1.0, max_value=5.0, value=4.2, step=0.1
+    )
+    term_psi = st.number_input(
+        "Terminal PSI", min_value=1.0, max_value=3.5,
+        value=1.0, step=0.1
+    )
+
+if init_psi <= term_psi:
+    st.sidebar.error("Initial PSI must be greater than terminal PSI")
+    st.stop()
+
 st.sidebar.markdown("### Advanced Settings")  # Subheader for additional settings
 with st.sidebar.expander("Layer Coefficients"):
     a1 = st.number_input("a1", min_value=0.0, max_value=1.0, value=0.42)
@@ -284,7 +299,7 @@ def calculate_delta_psi(esal=5000, Mr=15000, SN=5.0):
                 +0.2+8.07-(2.32*np.log10(Mr)))*(0.4+(1094/((SN+1)**5.19))))*(4.2-1.5)
 # print(Mrs)
 # print(Flooded_Mr)
-def get_psi_gwt_flood(psi_i=4.2, psi_t=1.0, esals=esals, design_years=20, Mrs=Mrs, Flooded_Mr=Flooded_Mr, flooded_vals=flooded_vals):
+def get_psi_gwt_flood(psi_i=init_psi, psi_t=term_psi, esals=esals, design_years=20, Mrs=Mrs, Flooded_Mr=Flooded_Mr, flooded_vals=flooded_vals):
     days = np.arange(design_years * 365+1)
     psi = np.full_like(days, 0, dtype=float)
     psi[0] = psi_i
@@ -796,7 +811,7 @@ if prediction_state:
         # Horizontal line at y=4.2 (Initial PSI)
         fig.add_trace(go.Scatter(
             x=[psi_data['Year'].min(), psi_data['Year'].max()],
-            y=[4.2, 4.2],
+            y=[init_psi, init_psi],
             mode='lines',
             line=dict(color='black', dash='dash'),
             name='Initial PSI'
@@ -805,7 +820,7 @@ if prediction_state:
         # Horizontal line at y=1.0 (Terminal PSI)
         fig.add_trace(go.Scatter(
             x=[psi_data['Year'].min(), psi_data['Year'].max()],
-            y=[1.0, 1.0],
+            y=[term_psi, term_psi],
             mode='lines',
             line=dict(color='gray', dash='dash'),
             name='Terminal PSI'
@@ -821,7 +836,7 @@ if prediction_state:
             xaxis_title='Year',
             yaxis_title='PSI',
             xaxis=dict(range=[0, 10], showgrid=True),
-            yaxis=dict(range=[0.0, 4.5], showgrid=True),
+            yaxis=dict(range=[0.0, init_psi+0.5], showgrid=True),
             legend=dict(font=dict(size=15),
                         x=0.5,  # Centers the legend horizontally
                         y=-0.3,  # Positions the legend below the plot
@@ -836,10 +851,10 @@ if prediction_state:
             height=600,
             width=800
         )
-        ending_year = np.ceil(np.max(psi_data['Year'].where(psi_data['PSI'] >= 1.0)))
+        ending_year = np.ceil(np.max(psi_data['Year'].where(psi_data['PSI'] >= term_psi)))
         # print(ending_year)
         fig.update_xaxes(tickfont=dict(size=25),title_font=dict(size=25), range=[-1, ending_year+1])
-        fig.update_yaxes(tickfont=dict(size=25),title_font=dict(size=25), range=[0, 4.5])
+        fig.update_yaxes(tickfont=dict(size=25),title_font=dict(size=25), range=[0, init_psi+0.5])
 
         st.plotly_chart(fig, use_container_width=True)
 
@@ -891,7 +906,7 @@ if prediction_state:
 
         fig.add_trace(go.Scatter(
             x=[-5, 25],
-            y=[4.2, 4.2],
+            y=[init_psi, init_psi],
             mode='lines',
             line=dict(color='black', dash='dash'),
             name='Initial PSI'
@@ -899,7 +914,7 @@ if prediction_state:
 
         fig.add_trace(go.Scatter(
             x=[-5, 25],
-            y=[1.0, 1.0],
+            y=[term_psi, term_psi],
             mode='lines',
             line=dict(color='gray', dash='dash'),
             name='Terminal PSI'
@@ -910,7 +925,7 @@ if prediction_state:
             xaxis_title='Year',
             yaxis_title='PSI',
             xaxis=dict(range=[0, 10]),
-            yaxis=dict(range=[0.0, 4.5]),
+            yaxis=dict(range=[0.0, init_psi+0.5]),
             legend=dict(
                 font=dict(size=15),
                 x=0.5,  # Centers the legend horizontally
@@ -928,11 +943,11 @@ if prediction_state:
                                   bgcolor='white',  # Background color of hover labels
                                   font_color='black'))  # Font color
         # Adding grid lines manually
-        ending_year = np.where(mean_psi < 1.0)
+        ending_year = np.where(mean_psi < term_psi)
         if ending_year[0].size == 0:
             ending_year = design_years
         else:
-            ending_year = np.where(mean_psi < 1.0)[0][0]//365
+            ending_year = np.where(mean_psi < term_psi)[0][0]//365
         
         # print(ending_year)
         fig.update_xaxes(range=[-1, ending_year+1],tickfont=dict(size=20),title_font=dict(size=20),showgrid=True, gridwidth=1, gridcolor='lightgrey')
@@ -957,3 +972,31 @@ if prediction_state:
         # st.pyplot(fig)
     # print(edge_sat_pred)
 st.divider()
+
+# after PSI figure is drawn
+if prediction_state:
+    st.session_state["predicted_done"] = True
+
+# create the button every rerun ONCE predicted_done is set
+if st.session_state.get("predicted_done", False):
+    if st.button("Compare adaptation alternatives", type="primary"):
+        st.session_state['scenario_inputs'] = [{
+            "label"        : "Base scenario",
+            "surT"         : surT,
+            "baseT"        : baseT,
+            "base_type"    : base_type,
+            "sg_type"      : sg_type,
+            "gwt_depth"    : gwt,
+            "gwt_rise"     : gwt_rise,
+            "flooded_days" : flooded_days,
+            "design_years" : design_years,
+            "traffic_classes": traffic_classes,
+            "aadt"         : aadt,
+            "growth_rate"  : growth_rate,
+            "a1"           : a1,        
+            "a2"           : a2,      
+            "m2"           : m2,
+            "init_psi"     : init_psi,
+            "term_psi"     : term_psi        
+        }]
+        st.switch_page("pages/02_Adaptation_Compare.py")  # exact filename
