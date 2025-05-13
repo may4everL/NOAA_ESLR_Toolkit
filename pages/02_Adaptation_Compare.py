@@ -117,7 +117,6 @@ if st.button("Compare scenarios",type="primary"):
             name=sc["label"],
             line=dict(width=3, color=colours[i % len(colours)])
         ))
-
     # dotted threshold lines
     line_fig.add_shape(type="line",x0=0,x1=max(eol_years),
                        y0=base["init_psi"],y1=base["init_psi"],
@@ -126,17 +125,37 @@ if st.button("Compare scenarios",type="primary"):
                        y0=base["term_psi"],y1=base["term_psi"],
                        line=dict(color="grey",dash="dash"))
     line_fig.update_layout(
-        title="PSI curves",xaxis_title="Year",yaxis_title="PSI",
-        yaxis=dict(range=[0,5]),legend=dict(orientation="h",
-        y=-0.25,x=0.5,xanchor="center"),height=650)
-    st.plotly_chart(line_fig,use_container_width=True)
+        title=dict(text="PSI curves", font=dict(size=24)),
+        xaxis_title=dict(text="Year", font=dict(size=22)),
+        yaxis_title=dict(text="PSI",  font=dict(size=22)),
+        xaxis=dict(tickfont=dict(size=20)),
+        yaxis=dict(tickfont=dict(size=20), range=[0, 5]),
+        legend=dict(
+            orientation="h",
+            y=-0.25, x=0.5, xanchor="center",
+            font=dict(size=20)
+        ),
+        height=650,
+        margin=dict(l=60, r=40, t=60, b=80)
+    )
 
     # bar charts
     bar_col=colours[:len(labels)]
     fig1=go.Figure(go.Bar(x=labels,y=eol_years,marker_color=bar_col))
-    fig1.update_layout(title="End‑of‑life year",yaxis_title="Year")
+    fig1.update_layout(
+        title=dict(text="End‑of‑life year", font=dict(size=24)),
+        yaxis_title=dict(text="Year", font=dict(size=22)),
+        xaxis_tickfont=dict(size=20),
+        yaxis_tickfont=dict(size=20),
+        height=450, margin=dict(l=60, r=40, t=60, b=60)
+    )
     fig2=go.Figure(go.Bar(x=labels,y=eol_psis,marker_color=bar_col))
-    fig2.update_layout(title="PSI at design horizon",
-                       yaxis_title="PSI",yaxis_range=[0,5])
+    fig2.update_layout(
+    title=dict(text="PSI at design horizon", font=dict(size=24)),
+        yaxis_title=dict(text="PSI", font=dict(size=22)),
+        yaxis=dict(range=[0, 5], tickfont=dict(size=20)),
+        xaxis_tickfont=dict(size=20),
+        height=450, margin=dict(l=60, r=40, t=60, b=60)
+    )
     st.plotly_chart(fig1,use_container_width=True)
     st.plotly_chart(fig2,use_container_width=True)
