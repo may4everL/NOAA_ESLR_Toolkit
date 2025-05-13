@@ -76,8 +76,8 @@ with st.sidebar.expander("Layer Thickness"):
     baseT = st.slider('Thickness of the base layer (inch)', min_value=6, max_value=28, step=1, value=8)
 
 with st.sidebar.expander("Material Properties"):
-    base_type = st.selectbox("Base type", ('A-1-a','A-1-b', 'A-2-4'), help='This will affect the hydrodynamic parameters and resilient modulus used for calculation.')
-    sg_type = st.selectbox("Subgrade type", ('A-1-a','A-1-b', 'A-2-4', 'A-2-5', 'A-2-6', 'A-2-7', 'A-4', 'A-5', 'A-6', 'A-7-5', 'A-7-6'), help='This will affect the hydrodynamic parameters and resilient modulus used for calculation.')
+    base_type = st.selectbox("Base type", ('A-1-a','A-1-b', 'A-2-4'), help='This will affect the hydrodynamic parameters and resilient modulus used for calculation.', index=2)
+    sg_type = st.selectbox("Subgrade type", ('A-1-a','A-1-b', 'A-2-4', 'A-2-5', 'A-2-6', 'A-2-7', 'A-4', 'A-5', 'A-6', 'A-7-5', 'A-7-6'), help='This will affect the hydrodynamic parameters and resilient modulus used for calculation.', index=2)
     st.markdown(
     "[AASHTO soil classification](https://transportation.org/technical-training-solutions/wp-content/uploads/sites/64/2023/02/AT-TC3CN025-18-T1-JA021.pdf)",
     unsafe_allow_html=True

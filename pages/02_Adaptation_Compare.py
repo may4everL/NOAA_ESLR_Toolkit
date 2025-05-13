@@ -138,7 +138,7 @@ if st.button("Compare scenarios",type="primary"):
         height=650,
         margin=dict(l=60, r=40, t=60, b=80)
     )
-
+    st.plotly_chart(line_fig, use_container_width=True)
     # bar charts
     bar_col=colours[:len(labels)]
     fig1=go.Figure(go.Bar(x=labels,y=eol_years,marker_color=bar_col))
