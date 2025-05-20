@@ -858,6 +858,39 @@ if prediction_state:
 
         st.plotly_chart(fig, use_container_width=True)
 
+        total_days = design_years * 365
+        year_num   = np.arange(total_days) // 365 + 1
+        day_num    = np.arange(total_days) % 365  + 1
+        date_col   = [f"Year {y}, Day {d}" for y, d in zip(year_num, day_num)]
+
+        esal_col = np.round(esals[:total_days])
+
+        day_type, modulus = [], []
+        for yr in range(design_years):
+            flood_len  = int(flooded_vals[yr] * 0.25)
+            normal_len = 365 - flood_len
+            day_type  += ["Normal"]   * normal_len + ["Flooding"] * flood_len
+            modulus   += [Mrs[yr]]    * normal_len + [Flooded_Mr[yr]] * flood_len
+
+        psi_vals = GWT_and_Flood_psi_data_A24[1: total_days + 1]   # drop day 0
+
+        daily_df = pd.DataFrame({
+            "Date"    : date_col,
+            "ESAL"    : esal_col,
+            "DayType" : day_type,
+            "Modulus" : modulus,
+            "PSI"     : psi_vals
+        })
+
+        csv_bytes = daily_df.to_csv(index=False).encode("utf-8")
+        st.download_button(
+            label="⬇️ Download daily data (CSV)",
+            data=csv_bytes,
+            file_name="daily_pavement_data.csv",
+            mime="text/csv",
+            type="secondary"
+        )
+
     else:
         num_simulations = 200
         all_psi_results = []
