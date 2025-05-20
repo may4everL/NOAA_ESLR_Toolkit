@@ -1,4 +1,9 @@
-import streamlit as st, numpy as np, plotly.graph_objects as go, plotly.express as px
+import streamlit as st
+import numpy as np
+import plotly.graph_objects as go
+import plotly.express as px
+import pandas as pd
+from datetime import timedelta, datetime
 from calc_traffic import get_daily_ESAL
 from calc_modulus import generate_Mr, generate_flooded_Mr
 
@@ -78,7 +83,20 @@ for idx, sc in enumerate(scenarios):
 st.divider()
 
 if st.button("Compare scenarios",type="primary"):
-    soil_map={'A-1-a':1,'A-1-b':2,'A-2-4':3}
+    soil_map = {
+        'A-1-a':1,
+        'A-1-b':2,
+        'A-2-4':3,
+        'A-2-5':4,
+        'A-2-6':5,
+        'A-2-7':6,
+        'A-3':7,
+        'A-4':8,
+        'A-5':9,
+        'A-6':10,
+        'A-7-5':11,
+        'A-7-6':12
+    }
     colours=["black"]+px.colors.qualitative.Set2
     line_fig=go.Figure(); eol_years=[]; eol_psis=[]; labels=[]
     for i,sc in enumerate(scenarios):
@@ -159,3 +177,59 @@ if st.button("Compare scenarios",type="primary"):
     )
     st.plotly_chart(fig1,use_container_width=True)
     st.plotly_chart(fig2,use_container_width=True)
+
+    total_days = base["design_years"] * 365
+    year_num   = np.arange(total_days) // 365 + 1
+    day_num    = np.arange(total_days) % 365  + 1
+    date_col   = [f"Year {y}, Day {d}" for y, d in zip(year_num, day_num)]
+    esal_col   = np.round(base_esals[:total_days])
+
+    flood_status = []
+    for yr in range(base["design_years"]):
+        flood_len  = int(base["flooded_days"] * 0.25)
+        normal_len = 365 - flood_len
+        flood_status.extend(["Normal"] * normal_len + ["Flooding"] * flood_len)
+
+    # start DataFrame with shared columns
+    df = pd.DataFrame({
+        "Date"    : date_col,
+        "ESAL"    : esal_col,
+        "Status"  : flood_status
+    })
+
+    # add two columns (Modulus, PSI) for each scenario
+    for i, sc in enumerate(scenarios):
+        yrs  = sc["design_years"]
+        gwt  = [sc["gwt_depth"] - sc["gwt_rise"] * y for y in range(yrs+1)]
+        floods = [sc["flooded_days"]] * (yrs+1)
+        Mrs   = generate_Mr(gwt, sc["sg_type"])
+        F_Mr  = generate_flooded_Mr([
+            {"Surface Thickness": sc["surT"], "Base Thickness": sc["baseT"],
+             "GWT": g, "Base Type": soil_map[sc["base_type"]],
+             "Subgrade Type": soil_map[sc["sg_type"]]} for g in gwt
+        ])
+
+        mod_series = []
+        for yr in range(yrs):
+            flood_len  = int(floods[yr] * 0.25)
+            normal_len = 365 - flood_len
+            mod_series.extend([Mrs[yr]] * normal_len + [F_Mr[yr]] * flood_len)
+
+        psi_series = get_psi_gwt_flood(
+            sc["init_psi"], sc["term_psi"], base_esals, yrs,
+            Mrs, F_Mr, floods, sc["a1"]*sc["surT"] + sc["a2"]*sc["baseT"]*sc["m2"]
+        )[1:total_days+1]
+
+        col_prefix = sc["label"].replace(",", "_")  # safe column name
+        df[f"Subgrade resilient modulus in psi ({col_prefix})"] = mod_series[:total_days]
+        df[f"PSI ({col_prefix})"]          = psi_series[:total_days]
+
+    csv_bytes = df.to_csv(index=False).encode("utf-8")
+    st.download_button(
+        label="⬇️ Download daily data (CSV)",
+        data=csv_bytes,
+        file_name="daily_comparison_data.csv",
+        mime="text/csv",
+        type="primary"
+    )
+

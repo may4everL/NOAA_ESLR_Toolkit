@@ -878,7 +878,7 @@ if prediction_state:
             "Date"    : date_col,
             "ESAL"    : esal_col,
             "DayType" : day_type,
-            "Modulus" : modulus,
+            "Subgrade resilient modulus in psi" : modulus,
             "PSI"     : psi_vals
         })
 
