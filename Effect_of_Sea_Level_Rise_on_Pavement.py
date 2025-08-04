@@ -263,17 +263,17 @@ gwt_vals = get_gwts(GWT_initial, gwt_rise, gwt_rise_std, design_years)
 flooded_vals = get_flooded_days(flooded_days, 0.0)
 soil_map = {
     'A-1-a':1,
-    'A-1-b':2,
-    'A-2-4':3,
-    'A-2-5':4,
-    'A-2-6':5,
-    'A-2-7':6,
-    'A-3':7,
-    'A-4':8,
-    'A-5':9,
-    'A-6':10,
-    'A-7-5':11,
-    'A-7-6':12
+    'A-1-b':1,
+    'A-2-4':2,
+    'A-2-5':2,
+    'A-2-6':2,
+    'A-2-7':2,
+    'A-3':3,
+    'A-4':4,
+    'A-5':5,
+    'A-6':5,
+    'A-7-5':6,
+    'A-7-6':6
 }
 input_params = {
     'Surface Thickness':surT,

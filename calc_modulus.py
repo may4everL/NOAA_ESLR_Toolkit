@@ -15,7 +15,19 @@ Mr_opts = {
     'A-5':21250,
     'A-6':18750,
     'A-7-5':12750,
-    'A-7-6':9250
+    'A-7-6':9250,
+    1:40250,
+    1:37750,
+    2:32750,
+    2:28500,
+    2:26250,
+    2:24750,
+    3:30500,
+    4:25250,
+    5:21250,
+    5:18750,
+    6:12750,
+    6:9250
 }
 Mr_sats = {
     'A-1-a':25582,
@@ -29,39 +41,53 @@ Mr_sats = {
     'A-5':13026,
     'A-6':12155,
     'A-7-5':8477,
-    'A-7-6':6261
+    'A-7-6':6261,
+    1:25582,
+    1:23993,
+    2:20815,
+    2:18114,
+    2:16684,
+    2:15730,
+    3:19385,
+    4:15544,
+    5:13026,
+    5:12155,
+    6:8477,
+    6:6261
 }
 
 def generate_Mr(gwt_vals, soil_type='A-2-4'):
     a, b, c = 2.12, 93.18, 20177.52
-    gwt_vals_cm = np.array(gwt_vals) * 2.54
-    if soil_type == 'A-1-a':
-        a, b, c = -2.2124, 481.23, 25107.98
-    if soil_type == 'A-1-b':
-        a, b, c = -1.1682, 400.66, 23910.03
-    if soil_type == 'A-2-4':
-        a, b, c = 2.12, 93.18, 20177.52
-    if soil_type == 'A-2-5':
-        a, b, c = -1.1045, 302.22, 18070.04
-    if soil_type == 'A-2-6':
-        a, b, c = -0.973, 274.29, 16640.73
-    if soil_type == 'A-2-7':
-        a, b, c = -0.9794, 260.56, 15695.62
-    if soil_type == 'A-3':
-        a, b, c = 1.9, 79.53, 18790.98
-    if soil_type == 'A-4':
-        a, b, c = 0.0424, 12.17, 15533.9
-    if soil_type == 'A-5':
-        a, b, c = 0.0823, 7.97, 12915.11
-    if soil_type == 'A-6':
-        a, b, c = 0.0088, 6.97, 12002.95
-    if soil_type == 'A-7-5':
-        a, b, c = 0.00146, 3.295, 8283.2
-    if soil_type == 'A-7-6':
-        a, b, c = 0.00021, 1.65, 6200.98
-    Mrs = [a*(gwt)**2 + b*(gwt) + c for gwt in gwt_vals_cm]
+    # gwt_vals_cm = np.array(gwt_vals) * 2.54
+    if soil_type == 'A-1-a' or 1:
+        a, b, c = -2.36e-4, 2.80e-2, 0.63
+    if soil_type == 'A-1-b' or 1:
+        a, b, c = -2.00e-4, 2.70e-2, 0.63
+    if soil_type == 'A-2-4' or 2:
+        a, b, c =  4.17e-4, 7.20e-3, 0.62
+    if soil_type == 'A-2-5' or 2:
+        a, b, c = -2.50e-4, 2.69e-2, 0.63
+    if soil_type == 'A-2-6' or 2:
+        a, b, c = -2.39e-4, 2.65e-2, 0.63
+    if soil_type == 'A-2-7' or 2:
+        a, b, c = -2.55e-4, 2.67e-2, 0.63
+    if soil_type == 'A-3' or 3:
+        a, b, c =  3.90e-4, 6.90e-3, 0.62
+    if soil_type == 'A-4' or 4:
+        a, b, c =  1.11e-5, 1.20e-3, 0.61
+    if soil_type == 'A-5' or 5:
+        a, b, c =  1.55e-5, 1.20e-3, 0.60
+    if soil_type == 'A-6' or 5:
+        a, b, c =  3.10e-6, 9.00e-4, 0.64
+    if soil_type == 'A-7-5' or 6:
+        a, b, c =  7.00e-7, 7.00e-4, 0.66
+    if soil_type == 'A-7-6' or 6:
+        a, b, c =  1.00e-7, 5.00e-4, 0.67
+    Mr_sat = Mr_sats[soil_type]
+    Mr_opt = Mr_opts[soil_type]
+    Mrs = [(a*(gwt)**2 + b*(gwt) + c) * Mr_opt for gwt in gwt_vals]
     # print(f'before cutoff: {Mrs}')
-    Mrs = [min(max(x, Mr_sats[soil_type]), Mr_opts[soil_type]) for x in Mrs] # apply cutoff from Mr_sat to Mr_opt
+    Mrs = [min(max(x, Mr_sat), Mr_opt) for x in Mrs] # apply cutoff from Mr_sat to Mr_opt
     return Mrs
 
 
@@ -135,8 +161,15 @@ def generate_flooded_Mr(input_params_list, df=df, k=5, weights=None):
     Returns:
     - List of predicted Mr values, one for each year.
     """
+
     mr_values = []
     for input_params in input_params_list:
+        cur_gwt = input_params['GWT']
+        cur_soil_type = input_params['Subgrade Type']
+        upper_limit = generate_Mr([cur_gwt], cur_soil_type)[0]
+        # print(upper_limit)
         mr = knn_predict_with_weights(df, input_params, k=k, weights=weights)
+        if mr > upper_limit:
+            mr = upper_limit
         mr_values.append(mr)
     return mr_values
