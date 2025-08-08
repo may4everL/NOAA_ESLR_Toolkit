@@ -59,32 +59,34 @@ Mr_sats = {
 def generate_Mr(gwt_vals, soil_type='A-2-4'):
     a, b, c = 2.12, 93.18, 20177.52
     # gwt_vals_cm = np.array(gwt_vals) * 2.54
-    if soil_type == 'A-1-a' or 1:
+    if soil_type =='A-1-a' or soil_type == 1:
         a, b, c = -2.36e-4, 2.80e-2, 0.63
-    if soil_type == 'A-1-b' or 1:
+    if soil_type == 'A-1-b' or soil_type == 1:
         a, b, c = -2.00e-4, 2.70e-2, 0.63
-    if soil_type == 'A-2-4' or 2:
+    if soil_type == 'A-2-4' or soil_type == 2:
         a, b, c =  4.17e-4, 7.20e-3, 0.62
-    if soil_type == 'A-2-5' or 2:
+    if soil_type == 'A-2-5' or soil_type == 2:
         a, b, c = -2.50e-4, 2.69e-2, 0.63
-    if soil_type == 'A-2-6' or 2:
+    if soil_type == 'A-2-6' or soil_type == 2:
         a, b, c = -2.39e-4, 2.65e-2, 0.63
-    if soil_type == 'A-2-7' or 2:
+    if soil_type == 'A-2-7' or soil_type == 2:
         a, b, c = -2.55e-4, 2.67e-2, 0.63
-    if soil_type == 'A-3' or 3:
+    if soil_type == 'A-3' or soil_type == 3:
         a, b, c =  3.90e-4, 6.90e-3, 0.62
-    if soil_type == 'A-4' or 4:
+    if soil_type == 'A-4' or soil_type == 4:
         a, b, c =  1.11e-5, 1.20e-3, 0.61
-    if soil_type == 'A-5' or 5:
+    if soil_type == 'A-5' or soil_type == 5:
         a, b, c =  1.55e-5, 1.20e-3, 0.60
-    if soil_type == 'A-6' or 5:
+    if soil_type == 'A-6' or soil_type == 5:
         a, b, c =  3.10e-6, 9.00e-4, 0.64
-    if soil_type == 'A-7-5' or 6:
+    if soil_type == 'A-7-5' or soil_type == 6:
         a, b, c =  7.00e-7, 7.00e-4, 0.66
-    if soil_type == 'A-7-6' or 6:
+    if soil_type == 'A-7-6' or soil_type == 6:
         a, b, c =  1.00e-7, 5.00e-4, 0.67
     Mr_sat = Mr_sats[soil_type]
     Mr_opt = Mr_opts[soil_type]
+    print(Mr_sat, Mr_opt)
+    print(gwt_vals)
     Mrs = [(a*(gwt)**2 + b*(gwt) + c) * Mr_opt for gwt in gwt_vals]
     # print(f'before cutoff: {Mrs}')
     Mrs = [min(max(x, Mr_sat), Mr_opt) for x in Mrs] # apply cutoff from Mr_sat to Mr_opt

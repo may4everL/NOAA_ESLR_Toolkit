@@ -282,7 +282,10 @@ input_params = {
     'Base Type':soil_map[base_type],
     'Subgrade Type':soil_map[sg_type]
 }
+# print(gwt_vals)
+gwt_vals = [0.0 if val < 0.0 else val for val in gwt_vals]
 Mrs = generate_Mr(gwt_vals, soil_type=sg_type)
+# print(Mrs)
 input_params_list = []
 for cur_gwt in gwt_vals:
     input_params_year = input_params.copy()
